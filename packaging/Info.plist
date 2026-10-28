@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleName</key><string>InlineExplain</string>
+  <key>CFBundleDisplayName</key><string>InlineExplain</string>
+  <key>CFBundleIdentifier</key><string>com.inlineexplain.desktop</string>
+  <key>CFBundleExecutable</key><string>inlineexplain</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleShortVersionString</key><string>0.1.6</string>
+  <key>CFBundleVersion</key><string>7</string>
+  <key>CFBundleIconFile</key><string>InlineExplain.icns</string>
+  <key>CFBundleDevelopmentRegion</key><string>zh-Hans</string>
+  <key>CFBundleLocalizations</key><array><string>zh-Hans</string><string>en</string></array>
+  <key>LSMinimumSystemVersion</key><string>15.0</string>
+  <key>LSUIElement</key><true/>
+  <key>NSHighResolutionCapable</key><true/>
+  <key>NSScreenCaptureUsageDescription</key><string>Read the word under your pointer and nearby text for an explanation. Screenshots stay on this Mac and are not saved.</string>
+  <key>NSPrincipalClass</key><string>NSApplication</string>
+</dict></plist>

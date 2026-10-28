@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- From the repository root: python3 -m http.server 8765 --bind 127.0.0.1
+       Then open http://127.0.0.1:8765/docs/popup-preview.html -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>InlineExplain · Popup preview</title>
+  <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; color: #27382f; background: #ffffff; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    button { font: inherit; color: inherit; cursor: pointer; }
+    button:focus-visible { outline: 2px solid #367359; outline-offset: 5px; }
+    button:active { transform: scale(.96); }
+    [hidden] { display: none !important; }
+    .preview { width: min(1140px, 100%); min-height: 740px; margin: auto; padding: 45px 48px 42px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; letter-spacing: -.15px; }
+    .brand img { width: 36px; height: 36px; }
+    h1 { margin: 36px 0 0; font-family: Georgia, "Songti SC", serif; font-size: 39px; font-weight: 400; line-height: 1.2; letter-spacing: -.8px; }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 410px; gap: 52px; align-items: start; margin-top: 53px; }
+    .reading { padding-top: 24px; }
+    .eyebrow { margin: 0 0 23px; color: #647268; font-size: 10px; font-weight: 600; letter-spacing: 1.3px; }
+    .passage { margin: 0; font-family: Georgia, "Songti SC", serif; font-size: 25px; line-height: 1.75; letter-spacing: -.2px; }
+    #word { position: relative; display: inline; margin: 0; padding: 0 2px 1px; border: 0; border-radius: 3px; background: #e2ece5; color: #275a41; font: inherit; }
+    #word:hover { background: #d6e5db; }
+    .pointer { position: absolute; right: -10px; bottom: -15px; width: 24px; height: 28px; pointer-events: none; filter: drop-shadow(0 1px 1px #ffffff); }
+    .continuation { margin: 25px 0 0; color: #758077; font-family: Georgia, "Songti SC", serif; font-size: 18px; line-height: 1.8; }
+    .shortcut { display: flex; align-items: center; gap: 12px; margin-top: 38px; color: #647268; font-size: 12px; }
+    #show { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border: 1px solid #d6dfd8; border-radius: 7px; background: #ffffff; color: #27382f; font-size: 13px; }
+    #show:hover { background: #f2f5f3; }
+    #show kbd { font: inherit; }
+    .popup { width: 410px; border-radius: 18px; background: #ffffff; box-shadow: 0 8px 35px #20372b24, 0 1px 5px #20372b12; overflow: hidden; }
+    #popup-frame { display: block; width: 100%; height: 450px; border: 0; border-radius: 18px; background: #ffffff; }
+    #preview-error { margin: 16px 0; color: #9f3830; font-size: 13px; line-height: 1.6; }
+    .preview-note { margin: 34px 0 0; color: #758077; font-size: 10px; line-height: 1.6; }
+    @media (max-width: 900px) { .preview { padding: 30px; } h1 { font-size: 34px; } .workspace { gap: 28px; } .passage { font-size: 22px; } }
+    @media (max-width: 720px) { .preview { padding: 24px; min-height: 100vh; } h1 { margin-top: 27px; font-size: 31px; } .workspace { grid-template-columns: minmax(0, 1fr); gap: 30px; margin-top: 28px; } .reading { padding-top: 0; } .eyebrow { margin-bottom: 15px; } .passage { font-size: 23px; } .continuation { font-size: 17px; } .shortcut { margin-top: 23px; } .popup { width: min(410px, 100%); } .preview-note { margin-top: 28px; } }
+  </style>
+</head>
+<body>
+  <main class="preview">
+    <header class="brand"><img src="../assets/icon.png" width="36" height="36" alt=""><span>InlineExplain</span></header>
+    <h1>Point at a word. Press ⌥ S. Keep reading.</h1>
+    <div class="workspace">
+      <article class="reading" aria-label="Example reading passage">
+        <p class="eyebrow">FROM WHAT YOU'RE READING</p>
+        <p class="passage">The guide helps readers <button id="word" type="button" aria-label="Explain grasp">grasp<svg class="pointer" viewBox="0 0 24 28" aria-hidden="true"><path d="M3 2 4 23l6-5 5 8 4-2-5-8 8-1Z" fill="#27382f" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"/></svg></button> unfamiliar ideas without breaking their flow.</p>
+        <p class="continuation">A little understanding is often enough to stay with the story and turn the next page.</p>
+        <div class="shortcut"><button id="show" type="button" aria-label="Show the explanation"><kbd>⌥</kbd><kbd>S</kbd></button><span>Point to look up. Escape to return.</span></div>
+      </article>
+      <aside id="popup" class="popup" aria-label="Illustrative InlineExplain popup"><iframe id="popup-frame" title="InlineExplain word explanation" loading="eager"></iframe></aside>
+    </div>
+    <p id="preview-error" hidden></p>
+    <p class="preview-note">HTML illustration · Real popup renderer, sample explanation · No screen capture or model request</p>
+  </main>
+  <script>
+    const popup = document.querySelector('#popup');
+    const frame = document.querySelector('#popup-frame');
+    const show = () => { popup.hidden = false; };
+    const hide = () => { popup.hidden = true; };
+    const keydown = (event) => {
+      if (event.key === 'Escape') hide();
+      // On macOS, Option changes event.key; event.code still identifies S.
+      if (event.altKey && event.code === 'KeyS') { event.preventDefault(); show(); }
+    };
+    window.InlineExplainPreview = {
+      hide,
+      keydown,
+      resize(height) { frame.style.height = Math.min(680, Math.max(150, height)) + 'px'; },
+      ready() { document.documentElement.dataset.previewReady = 'true'; }
+    };
+    document.querySelector('#word').addEventListener('click', show);
+    document.querySelector('#show').addEventListener('click', show);
+    document.addEventListener('keydown', keydown);
+    document.addEventListener('pointerdown', (event) => {
+      if (!event.target.closest('#word, #show, #popup')) hide();
+    });
+    (async () => {
+      const response = await fetch('../frontend/index.html');
+      if (!response.ok) throw new Error('Could not load the popup renderer.');
+      const frontend = await response.text();
+      const base = new URL('../frontend/', location.href).href;
+      const bridge = new URL('assets/popup-bridge.js', location.href).href;
+      frame.srcdoc = frontend.replace('<head>', '<head><base href="' + base + '"><script src="' + bridge + '"><\/script>');
+    })().catch((error) => {
+      popup.hidden = true;
+      const note = document.querySelector('#preview-error');
+      note.textContent = error.message + ' Serve the repository with: python3 -m http.server 8765 --bind 127.0.0.1, then open http://127.0.0.1:8765/docs/popup-preview.html';
+      note.hidden = false;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'">
+  <title>InlineExplain</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="i18n.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <section id="card" class="card" data-i18n-aria="card" aria-label="单词解释">
+    <main class="card-scroll">
+      <div id="content-body">
+        <div class="word-row"><h1 id="term">InlineExplain</h1><button id="copy" data-i18n-aria="copy" class="icon-button" data-icon="copy" aria-label="复制解释" title="复制解释"></button></div>
+        <p id="pronunciation" class="pronunciation"></p>
+        <p id="meaning" class="meaning"></p>
+        <p data-i18n="initialHint" id="loading" class="loading" role="status">Point at a word and press Option+S.</p>
+        <section id="context-section" class="context-block" hidden>
+          <h2 data-i18n="context" id="context-label">IN THIS SENTENCE</h2>
+          <p id="context"></p>
+          <details id="source-details"><summary data-i18n="source" id="source-label">Original sentence</summary><p id="source" class="source"></p></details>
+        </section>
+        <section id="examples-section" class="examples" hidden><h2 data-i18n="examples" id="examples-label">EXAMPLES</h2><div id="examples"></div></section>
+        <div id="relations" class="relations" hidden></div>
+        <section id="error-section" class="error-section" hidden aria-live="polite"><p id="error"></p><div class="error-actions"><button data-i18n="retry" id="retry" class="text-button">Try again</button><button data-i18n="settings" id="error-settings" class="text-button">Settings</button></div></section>
+      </div>
+    </main>
+  </section>
+  <main id="settings-page" class="settings-page" hidden>
+    <header class="settings-header"><p class="eyebrow">INLINEEXPLAIN</p><h1 data-i18n="settingsTitle">读懂一句，继续阅读。</h1><p data-i18n="settingsIntro">将鼠标放在单词上，按 ⌥ S，就地理解它的意思。</p></header>
+    <form id="settings-form">
+      <section class="settings-section">
+        <h2 data-i18n="service">解释服务</h2>
+        <p class="section-note" data-i18n="serviceNote">填写兼容 Chat Completions 的服务地址。API Key 保存在 macOS 钥匙串中。</p>
+        <label><span data-i18n="provider">服务地址</span><input id="endpoint-input" name="endpoint" type="url" required spellcheck="false" placeholder="https://api.deepseek.com"></label>
+        <div class="field-row"><label><span data-i18n="model">模型</span><input id="model-input" name="model" required spellcheck="false" placeholder="deepseek-chat"></label><label class="temperature-field"><span data-i18n="temperature">温度</span><input id="temperature-input" name="temperature" type="number" min="0" max="2" step="0.1" required></label></div>
+        <label><span data-i18n="key">API Key</span><input id="key-input" name="apiKey" type="password" autocomplete="off" spellcheck="false" data-i18n-placeholder="keyAdd" placeholder="填写 API Key"></label>
+        <p data-i18n="keyMissingNote" id="key-note" class="field-note">Keys are never saved in the settings file.</p>
+      </section>
+      <section class="settings-section">
+        <h2 data-i18n="preferences">语言与解释</h2>
+        <div class="field-row"><label><span data-i18n="language">语言</span><select id="language-input"><option value="en">English</option><option value="zh">简体中文</option></select></label><label><span data-i18n="shortcut">取词快捷键</span><select id="shortcut-input"><option value="Alt+S">Option + S</option><option value="Alt+Shift+S">Option + Shift + S</option></select></label></div>
+        <div class="prompt-heading"><label for="prompt-input" data-i18n="prompt">解释指令（Prompt）</label><button data-i18n="reset" id="reset-prompt" type="button" class="text-button">Reset default</button></div>
+        <textarea id="prompt-input" rows="10" spellcheck="false"></textarea>
+        <p class="field-note" data-i18n="promptNote">中英文分别保存自己的解释指令，切换语言时会使用对应版本。</p>
+      </section>
+      <section class="settings-section permission-section">
+        <div><h2 data-i18n="screenTitle">读取鼠标下的文字</h2><p data-i18n="screenChecking" id="permission-note" class="section-note">Checking Screen Recording access…</p></div>
+        <button data-i18n="screenAllow" id="permission-button" type="button" class="secondary-button">Allow Screen Recording</button>
+        <p class="field-note" data-i18n="privacy">仅在按下快捷键时截图，并在本机识别。</p>
+      </section>
+      <div class="save-row"><p id="save-status" role="status"></p><button data-i18n="save" type="submit" class="primary-button">保存设置</button></div>
+    </form>
+    <footer class="settings-footer">InlineExplain <span id="app-version"></span></footer>
+  </main>
+</body>
+</html>

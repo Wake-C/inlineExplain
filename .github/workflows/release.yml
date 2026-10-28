@@ -1,0 +1,72 @@
+name: Package release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inlineexplain-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the requested source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      - name: Build and verify the release DMG
+        run: ./scripts/package.sh
+
+      - name: Publish the verified package
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' packaging/Info.plist)
+          tag="v$version"
+          filename="InlineExplain-$version-macos-arm64.dmg"
+          existing=$(gh api "repos/$GH_REPO/git/matching-refs/tags/$tag" --jq "map(select(.ref == \"refs/tags/$tag\")) | length")
+          if [ "$existing" -ne 0 ]; then
+            echo "Tag $tag already exists. Update packaging/Info.plist for a new release." >&2
+            exit 1
+          fi
+          cat > "$RUNNER_TEMP/release-notes.md" <<EOF
+          Point at an English word and press **Option+S** to see its meaning in context.
+
+          - macOS 15 or later, Apple Silicon.
+          - Chinese by default, with English and custom prompts available in Settings.
+          - Local Apple Vision OCR; bring your own compatible model service and API key.
+
+          Open the DMG and drag InlineExplain to Applications. This package is ad-hoc signed and is not notarized by Apple. See the README for first-open steps and privacy details.
+
+          Source: $SOURCE_SHA
+          EOF
+          gh release create "$tag" "build/release/$filename" build/release/SHA256SUMS.txt \
+            --draft --target "$SOURCE_SHA" --title "InlineExplain $version" \
+            --notes-file "$RUNNER_TEMP/release-notes.md"
+          gh release download "$tag" --dir "$RUNNER_TEMP/verified-release"
+          cmp build/release/SHA256SUMS.txt "$RUNNER_TEMP/verified-release/SHA256SUMS.txt"
+          (
+            cd "$RUNNER_TEMP/verified-release"
+            shasum -a 256 -c SHA256SUMS.txt
+            hdiutil verify "$filename"
+          )
+          gh release edit "$tag" --draft=false
+          gh release view "$tag" --json url --jq .url >> "$GITHUB_STEP_SUMMARY"
