@@ -1,44 +1,44 @@
 # InlineExplain
 
-<p align="center"><img src="assets/icon.png" width="96" height="96" alt="InlineExplain app icon"></p>
+<p align="center"><img src="assets/icon.png" width="96" height="96" alt="InlineExplain 应用图标"></p>
 
-Understand an English word in its sentence, without leaving your current app.
+在正在阅读的应用里，读懂一个英文单词在句子中的意思。
 
-**Point at a word → press Option+S → read its meaning in context.**
+**鼠标指向单词 → 按 Option+S → 就地查看语境解释。**
 
-**[Download for macOS](https://github.com/Wake-C/inlineExplain/releases/latest)** · [简体中文](README.zh-CN.md) · macOS 15+ · Apple Silicon
+**[下载 macOS 版](https://github.com/Wake-C/inlineExplain/releases/latest)** · [English](README.en.md) · macOS 15+ · Apple Silicon
 
-![An English article beside InlineExplain's Chinese explanation of “grasp”, with pronunciation, context and examples.](docs/assets/popup-preview.png)
+![英文文章旁的 InlineExplain 浮窗，展示 grasp 的中文释义、音标、语境说明和例句。](docs/assets/popup-preview.png)
 
-<sub>Illustrative HTML preview, using the app's popup renderer. [Prototype source](docs/popup-preview.html).</sub>
+<sub>HTML 示意预览，使用应用实际的浮窗渲染代码。[交互原型源码](docs/popup-preview.html)。</sub>
 
-## A little help, then keep reading
+## 读懂单词，接着读下去
 
-InlineExplain reads the word under your pointer and the nearby sentence. A small white popup gives you its meaning in that context, pronunciation, examples and useful related words. You can check the original sentence, hear an example or copy the explanation.
+InlineExplain 识别鼠标下的单词和附近的句子，在一个白色小浮窗里显示对应的释义、音标、例句和近反义词。需要时可以展开原句、朗读例句或复制解释。
 
-The popup is designed to keep the source app active, including in full screen. Press **Escape** or click outside to dismiss it. Chinese is the default; switch to English in Settings. Each language has its own editable prompt.
+浮窗的设计目标是让原应用保持焦点，全屏阅读时也能就地查看。按 **Escape** 或点击外部即可关闭。界面和解释默认使用中文，可在设置中切换英文；两种语言分别保存自己的自定义 Prompt。
 
-## Get started
+## 开始使用
 
-1. Download the DMG, open it and drag **InlineExplain** to **Applications**. Open the app from there.
-2. Click the InlineExplain book icon in the menu bar and open **Settings**. Add your provider URL, model and API key. The defaults are `https://api.deepseek.com` and `deepseek-chat`; other Chat Completions-compatible services can also be used. Your provider may charge for requests.
-3. Allow **Screen Recording** when prompted. Quit and reopen InlineExplain if macOS asks.
-4. Point directly at a visible English word and press **Option+S**. You do not need to select or copy it first.
+1. 下载并打开 DMG，将 **InlineExplain** 拖到 **Applications（应用程序）**，再从那里打开应用。
+2. 点击菜单栏的 InlineExplain 书本图标，打开**设置**，填写服务地址、模型和 API Key。默认使用 `https://api.deepseek.com` 和 `deepseek-chat`，也支持其他兼容 Chat Completions 的服务。服务商可能按用量收费。
+3. 按提示允许**屏幕录制**。如果 macOS 要求，请退出并重新打开 InlineExplain。
+4. 将鼠标直接放在可见的英文单词上，按 **Option+S**，无需先选中或复制。
 
-Updates keep your saved provider settings; the DeepSeek default applies on first launch.
+更新会保留已保存的服务设置；DeepSeek 默认地址仅在首次启动时使用。
 
-The release is ad-hoc signed and is not notarized by Apple. If macOS blocks it, open **System Settings → Privacy & Security → Open Anyway** only if you trust this project and its download.
+当前发布包采用 ad-hoc 签名，尚未通过 Apple 公证。如果 macOS 阻止打开，仅在你信任项目及下载来源时，前往**系统设置 → 隐私与安全性 → 仍要打开**。
 
-If another app uses Option+S, pause that shortcut or choose **Option+Shift+S** in InlineExplain Settings.
+如果其他应用也使用 Option+S，请暂停其快捷键，或在 InlineExplain 设置中改用 **Option+Shift+S**。
 
-## Privacy and limits
+## 隐私与限制
 
-Capture and Apple Vision OCR run on your Mac, only when you use the shortcut. Screenshots stay in memory. The word and a short surrounding context go to your chosen model service. API keys stay in macOS Keychain; reading text, screenshots and answers are not saved or logged by the app.
+仅在按下快捷键时截图，并在 Mac 上通过 Apple Vision 识别文字。截图只保留在内存中；单词和一小段上下文会发送给你选择的模型服务。API Key 保存在 macOS 钥匙串中，应用不保存或记录阅读文字、截图和解释结果。
 
-OCR can read only visible text. Off-screen sentences, protected video, tiny text and complex layouts can leave it with too little context. Model explanations can be wrong. This version looks up individual words; it has no phrase selection, reading history, flashcards or auto-update.
+OCR 只能识别屏幕上可见的文字。屏幕外的句子、受保护的视频、过小的文字和复杂排版可能导致上下文不足。模型解释也可能出错。当前版本支持单词取词，暂不支持短语选择、阅读历史、单词卡片或自动更新。
 
-## Development
+## 开发
 
-Build and verification commands are in [Development](docs/development.md). To make a release DMG locally, run `./scripts/package.sh`. The [release guide](docs/releasing.md) covers the same command in the manual GitHub Actions workflow. Pushes do not start packaging or test jobs.
+构建和验证命令见[开发指南](docs/development.md)。本机执行 `./scripts/package.sh` 即可打包发布 DMG；[发布指南](docs/releasing.md)说明了如何在手动触发的 GitHub Actions 中使用同一条命令。推送代码不会触发打包或测试任务。
 
-InlineExplain is a separate macOS companion to [Peekturn](https://github.com/Wake-C/peekturn), an English reading app for Android. Prompt and code provenance are listed in [Third-party notices](NOTICE).
+InlineExplain 是独立的 macOS 阅读工具，[Peekturn](https://github.com/Wake-C/peekturn) 则是面向 Android 的英文阅读应用。Prompt 和代码来源见[第三方声明](NOTICE)。
