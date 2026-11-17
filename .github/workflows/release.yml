@@ -28,8 +28,37 @@ jobs:
           go-version-file: go.mod
           cache: false
 
+      - name: Require the fixed signing identity
+        env:
+          P12: ${{ secrets.MACOS_SIGNING_P12_BASE64 }}
+          PASSWORD: ${{ secrets.MACOS_SIGNING_P12_PASSWORD }}
+          IDENTITY: ${{ vars.MACOS_SIGNING_IDENTITY }}
+        run: |
+          if [[ -z "$P12" || -z "$PASSWORD" || ! "$IDENTITY" =~ ^[0-9A-Fa-f]{40}$ ]]; then
+            echo 'Configure the signing secrets and certificate SHA-1 in docs/releasing.md.' >&2
+            exit 1
+          fi
+
+      - name: Import the fixed signing certificate
+        uses: apple-actions/import-codesign-certs@63fff01cd422d4b7b855d40ca1e9d34d2de9427d # v3
+        with:
+          p12-file-base64: ${{ secrets.MACOS_SIGNING_P12_BASE64 }}
+          p12-password: ${{ secrets.MACOS_SIGNING_P12_PASSWORD }}
+
       - name: Build and verify the release DMG
-        run: ./scripts/package.sh
+        env:
+          INLINEEXPLAIN_SIGN_IDENTITY: ${{ vars.MACOS_SIGNING_IDENTITY }}
+        run: |
+          ./scripts/package.sh
+          for target in build/InlineExplain.app build/InlineExplain.app/Contents/MacOS/InlineExplainOCR; do
+            codesign --verify -R="certificate leaf = H\"$INLINEEXPLAIN_SIGN_IDENTITY\"" "$target"
+          done
+
+      - name: Remove the temporary signing Keychain
+        if: always()
+        run: |
+          keychain="$HOME/Library/Keychains/signing_temp.keychain-db"
+          if test -f "$keychain"; then security delete-keychain "$keychain"; fi
 
       - name: Publish the verified package
         shell: bash
@@ -53,8 +82,10 @@ jobs:
           - macOS 15 or later, Apple Silicon.
           - Chinese by default, with English and custom prompts available in Settings.
           - Local Apple Vision OCR; bring your own compatible model service and API key.
+          - US word pronunciation from Youdao, with optional automatic pronunciation (off by default).
+          - Certificate-backed signing shared by releases, instead of a changing ad-hoc identity.
 
-          Open the DMG and drag InlineExplain to Applications. This package is ad-hoc signed and is not notarized by Apple. See the README for first-open steps and privacy details.
+          Open the DMG and drag InlineExplain to Applications. This package uses a self-signed certificate and is not notarized by Apple. Updating from an ad-hoc build may require granting Screen Recording again. Permission retention across future updates still needs installed-app verification. See the README for first-open steps and privacy details.
 
           Source: $SOURCE_SHA
           EOF

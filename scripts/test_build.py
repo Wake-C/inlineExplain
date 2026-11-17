@@ -63,6 +63,22 @@ exit 0
         self.check_failure("signing")
 
 
+class SigningRequirementTests(unittest.TestCase):
+    def test_certificate_requirement_rejects_adhoc(self):
+        # Exercise the requirement used by the build with real macOS signatures.
+        source = (Path(__file__).resolve().parent / "build.sh").read_text()
+        requirement = source.split("codesign --verify -R='")[1].split("'")[0]
+        subprocess.run(["codesign", "--verify", "-R=" + requirement, "/usr/bin/say"], check=True)
+        task = Path(os.environ.get("INLINEEXPLAIN_TEST_DIR", Path.home() / "Documents/tmp/inlineExplain"))
+        task.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix="signing-regression-", dir=task) as temporary:
+            binary = Path(temporary) / "adhoc"
+            shutil.copyfile("/usr/bin/say", binary)
+            subprocess.run(["codesign", "--force", "--sign", "-", str(binary)], check=True, capture_output=True)
+            result = subprocess.run(["codesign", "--verify", "-R=" + requirement, str(binary)], capture_output=True)
+            self.assertNotEqual(result.returncode, 0, "An ad-hoc binary must not pass the signing gate")
+
+
 class PackageFailureTests(unittest.TestCase):
     def check_failure(self, stage):
         root = Path(__file__).resolve().parent.parent

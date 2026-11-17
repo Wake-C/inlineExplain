@@ -49,9 +49,17 @@ mkdir -p "$APP/Contents/Resources/ThirdParty"
     if test -f "$notice"; then cp -f "$notice" "$APP/Contents/Resources/ThirdParty/${module_dir:t}-${notice:t}"; fi
   done
 done
-SIGN_IDENTITY=${INLINEEXPLAIN_SIGN_IDENTITY:--}
-codesign --force --sign "$SIGN_IDENTITY" --identifier com.inlineexplain.desktop.ocr "$APP/Contents/MacOS/InlineExplainOCR"
-codesign --force --sign "$SIGN_IDENTITY" --identifier com.inlineexplain.desktop "$APP"
+SIGN_IDENTITY=${INLINEEXPLAIN_SIGN_IDENTITY:-InlineExplain Release}
+if [[ "$SIGN_IDENTITY" == - ]]; then
+  print -u2 'Ad-hoc signing is not supported. Use the fixed certificate described in docs/releasing.md.'
+  exit 1
+fi
+codesign --force --timestamp=none --sign "$SIGN_IDENTITY" --identifier com.inlineexplain.desktop.ocr "$APP/Contents/MacOS/InlineExplainOCR"
+codesign --force --timestamp=none --sign "$SIGN_IDENTITY" --identifier com.inlineexplain.desktop "$APP"
+# Require a certificate-backed identity, not merely an intact ad-hoc signature.
+for target in "$APP" "$APP/Contents/MacOS/InlineExplainOCR"; do
+  codesign --verify -R='certificate leaf[subject.CN] exists' "$target"
+done
 codesign --verify --deep --strict "$APP"
 python3 scripts/check_identity.py --app "$APP"
 if test -e "$FINAL_APP"; then mv "$FINAL_APP" "$PREVIOUS_APP"; fi

@@ -7,6 +7,7 @@ install or build step.
 
 ```sh
 xcode-select --install
+# First set up the fixed signing identity described in docs/releasing.md.
 ./scripts/build.sh
 open build/InlineExplain.app
 ```

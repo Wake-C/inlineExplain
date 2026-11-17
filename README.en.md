@@ -27,7 +27,7 @@ The popup is designed to keep the source app active, including in full screen. P
 
 Updates keep your saved provider settings; the DeepSeek default applies on first launch.
 
-The release is ad-hoc signed and is not notarized by Apple. If macOS blocks it, open **System Settings → Privacy & Security → Open Anyway** only if you trust this project and its download.
+Versions through 0.1.6 are ad-hoc signed. Subsequent releases require a fixed signing certificate; they are still not notarized by Apple. If macOS blocks it, open **System Settings → Privacy & Security → Open Anyway** only if you trust this project and its download.
 
 If another app uses Option+S, pause that shortcut or choose **Option+Shift+S** in InlineExplain Settings.
 
