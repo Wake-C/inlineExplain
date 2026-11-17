@@ -12,7 +12,7 @@ function fixture(hasKey = false, language = 'en') {
     return elements.get(selector);
   };
   const events = new Map();
-  const backend = {settings:{endpoint:'https://api.deepseek.com',model:'deepseek-chat',temperature:.3,language:'en',shortcut:'Alt+S',englishPrompt:'English prompt',chinesePrompt:'Chinese prompt'},hasKey,revision:0};
+  const backend = {settings:{endpoint:'https://api.deepseek.com',model:'deepseek-chat',temperature:.3,language:'en',shortcut:'Alt+S',englishPrompt:'English prompt',chinesePrompt:'Chinese prompt',autoPronounce:false},hasKey,revision:0};
   backend.settings.language = language;
   const calls = [];
   const gate = {holdSave:false, holdPreferences:false, save:null, commitSave:null, replySave:null, failSave:null, preferences:null};
@@ -72,6 +72,16 @@ const tick = () => new Promise(setImmediate);
   await check('An existing saved API key remains visible', async () => {
     const withKey = fixture(true); await start(withKey); await submit(withKey);
     assert.equal(withKey.get('#key-input').placeholder,'Saved in Keychain');
+  });
+  await check('Automatic pronunciation is off by default and saves its toggle', async () => {
+    const value = fixture(); await start(value);
+    assert.equal(value.get('#auto-pronounce-input').checked,false,'Automatic pronunciation must start off');
+    value.get('#auto-pronounce-input').checked = true;
+    value.get('#auto-pronounce-input').onchange();
+    await submit(value);
+    assert.equal(value.backend.settings.autoPronounce,true,'The automatic pronunciation toggle must be saved');
+    const sent = value.calls.filter(([method])=>method==='Desktop.Save').at(-1)[1];
+    assert.equal(sent.autoPronounce,true,'The automatic pronunciation toggle must be submitted');
   });
   await check('Refreshing keeps unsaved prompts and submits only edited fields', async () => {
     const draft = fixture(); await start(draft);

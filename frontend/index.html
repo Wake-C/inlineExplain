@@ -13,7 +13,7 @@
   <section id="card" class="card" data-i18n-aria="card" aria-label="单词解释">
     <main class="card-scroll">
       <div id="content-body">
-        <div class="word-row"><h1 id="term">InlineExplain</h1><button id="copy" data-i18n-aria="copy" class="icon-button" data-icon="copy" aria-label="复制解释" title="复制解释"></button></div>
+        <div class="word-row"><h1 id="term">InlineExplain</h1><button id="speak" data-i18n-aria="pronounce" class="icon-button" data-icon="speaker" aria-label="朗读单词" title="朗读单词" disabled></button><button id="copy" data-i18n-aria="copy" class="icon-button" data-icon="copy" aria-label="复制解释" title="复制解释"></button></div>
         <p id="pronunciation" class="pronunciation"></p>
         <p id="meaning" class="meaning"></p>
         <p data-i18n="initialHint" id="loading" class="loading" role="status">Point at a word and press Option+S.</p>
@@ -42,6 +42,7 @@
       <section class="settings-section">
         <h2 data-i18n="preferences">语言与解释</h2>
         <div class="field-row"><label><span data-i18n="language">语言</span><select id="language-input"><option value="en">English</option><option value="zh">简体中文</option></select></label><label><span data-i18n="shortcut">取词快捷键</span><select id="shortcut-input"><option value="Alt+S">Option + S</option><option value="Alt+Shift+S">Option + Shift + S</option></select></label></div>
+        <label class="toggle-field"><input id="auto-pronounce-input" name="autoPronounce" type="checkbox"><span><span data-i18n="autoPronounce">自动朗读单词</span><small data-i18n="autoPronounceNote">取词卡片出现时自动朗读单词。</small></span></label>
         <div class="prompt-heading"><label for="prompt-input" data-i18n="prompt">解释指令（Prompt）</label><button data-i18n="reset" id="reset-prompt" type="button" class="text-button">Reset default</button></div>
         <textarea id="prompt-input" rows="10" spellcheck="false"></textarea>
         <p class="field-note" data-i18n="promptNote">中英文分别保存自己的解释指令，切换语言时会使用对应版本。</p>

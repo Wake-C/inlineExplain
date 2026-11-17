@@ -51,6 +51,8 @@ type Desktop struct {
 	anchor            mygo.Point
 	quitting          bool // Native close and quit callbacks run on the main thread.
 	speech            *exec.Cmd
+	speechFile        string
+	speechID          uint64
 }
 
 func main() {
@@ -148,6 +150,7 @@ func (d *Desktop) startLookup() {
 			d.state.Passage = capture.Context
 			d.anchor = mygo.Point{X: int(capture.Bounds.X), Y: int(capture.Bounds.Y + capture.Bounds.Height)}
 		}
+		autoPronounce := d.settings.AutoPronounce
 		d.mu.Unlock()
 		d.placeCard(280)
 		d.card.Show() // Nonactivating NSPanel: the source app and full-screen Space stay active.
@@ -155,6 +158,16 @@ func (d *Desktop) startLookup() {
 		if err != nil {
 			d.finish(id, explain.Explanation{}, err, started)
 			return
+		}
+		if autoPronounce {
+			go func() {
+				d.mu.Lock()
+				current := d.state.ID == id && ctx.Err() == nil
+				d.mu.Unlock()
+				if current {
+					_ = d.SpeakWord(capture.Context.Selection)
+				}
+			}()
 		}
 		d.runExplanation(ctx, id, started)
 	}()
@@ -268,10 +281,12 @@ func (d *Desktop) stop() {
 		d.cancel()
 		d.cancel = nil
 	}
+	d.speechID++
 	if d.speech != nil && d.speech.Process != nil {
 		_ = d.speech.Process.Kill()
 		d.speech = nil
 	}
+	d.dropSpeechFileLocked()
 	d.mu.Unlock()
 }
 
@@ -336,26 +351,6 @@ func (d *Desktop) Copy() {
 		}
 	}
 	mygo.Clipboard.WriteText(strings.Join(parts, "\n\n"))
-}
-
-func (d *Desktop) Speak(text string) error {
-	if strings.TrimSpace(text) == "" || len(text) > 2000 {
-		return nil
-	}
-	d.mu.Lock()
-	if d.speech != nil && d.speech.Process != nil {
-		_ = d.speech.Process.Kill()
-	}
-	command := exec.Command("/usr/bin/say")
-	command.Stdin = strings.NewReader(text)
-	if err := command.Start(); err != nil {
-		d.mu.Unlock()
-		return errors.New("Speech could not start. Check your macOS voices.")
-	}
-	d.speech = command
-	d.mu.Unlock()
-	go func() { _ = command.Wait() }()
-	return nil
 }
 
 func (d *Desktop) OpenSettings() {

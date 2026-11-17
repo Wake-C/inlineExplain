@@ -14,7 +14,7 @@ Understand an English word in its sentence, without leaving your current app.
 
 ## A little help, then keep reading
 
-InlineExplain reads the word under your pointer and the nearby sentence. A small white popup gives you its meaning in that context, pronunciation, examples and useful related words. You can check the original sentence, hear an example or copy the explanation.
+InlineExplain reads the word under your pointer and the nearby sentence. A small white popup gives you its meaning in that context, pronunciation, examples and useful related words. You can check the original sentence, hear the word or an example, and copy the explanation.
 
 The popup is designed to keep the source app active, including in full screen. Press **Escape** or click outside to dismiss it. Chinese is the default; switch to English in Settings. Each language has its own editable prompt.
 
@@ -33,7 +33,7 @@ If another app uses Option+S, pause that shortcut or choose **Option+Shift+S** i
 
 ## Privacy and limits
 
-Capture and Apple Vision OCR run on your Mac, only when you use the shortcut. Screenshots stay in memory. The word and a short surrounding context go to your chosen model service. API keys stay in macOS Keychain; reading text, screenshots and answers are not saved or logged by the app.
+Capture and Apple Vision OCR run on your Mac, only when you use the shortcut. Screenshots stay in memory. The word and a short surrounding context go to your chosen model service. When you play the word's pronunciation, that word goes to Youdao Dictionary; example speech uses a macOS voice. API keys stay in macOS Keychain; reading text, screenshots and answers are not saved or logged by the app.
 
 OCR can read only visible text. Off-screen sentences, protected video, tiny text and complex layouts can leave it with too little context. Model explanations can be wrong. This version looks up individual words; it has no phrase selection, reading history, flashcards or auto-update.
 

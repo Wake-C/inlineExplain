@@ -23,6 +23,7 @@ type Settings struct {
 	EnglishPrompt string  `json:"englishPrompt"`
 	ChinesePrompt string  `json:"chinesePrompt"`
 	Shortcut      string  `json:"shortcut"`
+	AutoPronounce bool    `json:"autoPronounce"`
 }
 
 type Preferences struct {
@@ -43,6 +44,7 @@ type SettingsPatch struct {
 	EnglishPrompt *string  `json:"englishPrompt,omitempty"`
 	ChinesePrompt *string  `json:"chinesePrompt,omitempty"`
 	Shortcut      *string  `json:"shortcut,omitempty"`
+	AutoPronounce *bool    `json:"autoPronounce,omitempty"`
 }
 
 func (p SettingsPatch) apply(settings Settings) Settings {
@@ -67,6 +69,9 @@ func (p SettingsPatch) apply(settings Settings) Settings {
 	if p.Shortcut != nil {
 		settings.Shortcut = *p.Shortcut
 	}
+	if p.AutoPronounce != nil {
+		settings.AutoPronounce = *p.AutoPronounce
+	}
 	return settings
 }
 
@@ -89,7 +94,7 @@ func loadSettings() (Settings, error) {
 }
 
 func defaultSettings() Settings {
-	return Settings{Endpoint: "https://api.deepseek.com", Model: "deepseek-chat", Temperature: .3, Language: "zh", Shortcut: "Alt+S"}
+	return Settings{Endpoint: "https://api.deepseek.com", Model: "deepseek-chat", Temperature: .3, Language: "zh", Shortcut: "Alt+S", AutoPronounce: false}
 }
 
 func settingsPath() string {

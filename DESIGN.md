@@ -4,11 +4,11 @@ Use a compact white card beside the source text, with no dark mode. Establish
 hierarchy through typography, spacing and alignment. Use quiet green accents
 and a soft tint only behind the explanation of the word in context.
 
-The word leads, with the copy icon at its right. Follow with pronunciation,
-meaning and contextual explanation. Keep the original sentence available on
-demand, then examples and useful word relations. Do not add an app toolbar or
-status footer to the card. Give the word and meaning a reader-like serif face;
-use system fonts for controls and supporting text.
+The word leads, with the speak and copy icons at its right. Follow with
+pronunciation, meaning and contextual explanation. Keep the original sentence
+available on demand, then examples and useful word relations. Do not add an
+app toolbar or status footer to the card. Give the word and meaning a
+reader-like serif face; use system fonts for controls and supporting text.
 
 Keep controls compact, named for accessibility and visibly focusable. Avoid
 entrance and streaming animations. Escape and outside-click dismiss the card.

@@ -68,7 +68,8 @@ Peekturn
 --------
 Source: https://github.com/Wake-C/peekturn
 Default prompts and answer fields follow ExplanationClient.kt; context
-edges follow model/Models.kt. Adaptations use visible OCR text, editable
+edges follow model/Models.kt; word audio request shape follows
+speech/WordAudioProvider.kt. Adaptations use visible OCR text, editable
 prompts for each language, and direct contextual meaning.
 
 

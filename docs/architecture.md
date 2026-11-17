@@ -40,6 +40,12 @@ flowchart LR
   the answer schema. The service receives text, not a screenshot. Custom
   prompts must preserve that answer schema. DeepSeek thinking is disabled;
   unrelated model families do not receive its provider-specific parameter.
+- **Word audio:** [`internal/speech/`](../internal/speech/) fetches one
+  bounded MPEG recording for the word from the key-free Youdao Dictionary
+  endpoint. It sends only one plain English word and never the surrounding
+  text. American English is the default. The provider is unofficial; if it
+  has no usable audio, [`speech.go`](../speech.go) speaks the word with the
+  macOS voice. Example sentences use the macOS voice only.
 - **Settings and credentials:** [`settings.go`](../settings.go) owns saved
   preferences and Keychain identity. Keys are scoped to the canonical origin
   (scheme, IDNA-normalized host and port) and local login account. Host
@@ -70,7 +76,7 @@ default CI credential. Keep profiles and provider details outside the repo.
 Builds, browser previews and controller tests do not establish native
 acceptance. Verify the installed app with real visible text, physical pointing
 and the shortcut, full-screen focus, dismissal, Settings reopen and relevant
-background/offline behavior. Check audible example playback when changing
-speech. Report unavailable checks separately from passes.
+background/offline behavior. Check audible word and example playback when
+changing speech. Report unavailable checks separately from passes.
 
 Code and prompt provenance belong in [Third-party notices](../NOTICE).

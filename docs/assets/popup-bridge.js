@@ -29,6 +29,13 @@
   window.mygo = {
     on() {},
     async call(method, ...args) {
+      const speak = (text) => {
+        if (!('speechSynthesis' in window)) return;
+        speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        speechSynthesis.speak(utterance);
+      };
       switch (method) {
         case 'Desktop.Read': return sample;
         case 'Desktop.Resize':
@@ -41,14 +48,8 @@
             sample.answer.term, sample.answer.meaning, sample.answer.context,
             ...sample.answer.examples.flatMap((example) => [example.text, example.translation])
           ].join('\n\n'));
-        case 'Desktop.Speak': {
-          if (!('speechSynthesis' in window)) return;
-          speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(args[0]);
-          utterance.lang = 'en-US';
-          speechSynthesis.speak(utterance);
-          return;
-        }
+        case 'Desktop.Speak':
+        case 'Desktop.SpeakWord': { speak(args[0]); return; }
         default: throw new Error('This control is unavailable in the preview.');
       }
     }

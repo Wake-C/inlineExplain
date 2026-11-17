@@ -38,7 +38,9 @@ function render(value) {
   const answer = value.answer || {};
   const chinese = (value.language || 'zh') === 'zh';
   ui.setLanguage(chinese ? 'zh' : 'en');
+  const spoken = value.passage?.selection || answer.term;
   $('#term').textContent = answer.term || value.passage?.selection || 'InlineExplain';
+  $('#speak').disabled = !spoken;
   const pronunciations = [];
   if (answer.ukIpa) pronunciations.push(`UK ${answer.ukIpa}`);
   if (answer.usIpa && answer.usIpa !== answer.ukIpa) pronunciations.push(`US ${answer.usIpa}`);
@@ -83,6 +85,10 @@ function render(value) {
 
 async function initCard() {
   $('#error-settings').onclick = () => call('OpenSettings');
+  $('#speak').onclick = () => {
+    const term = state?.passage?.selection || state?.answer?.term;
+    if (term) call('SpeakWord', term).catch(failure);
+  };
   $('#copy').onclick = () => call('Copy').then(() => { $('#copy').title = t('copied'); }).catch(failure);
   $('#retry').onclick = () => call('Retry').catch(failure);
   $('#source-details').addEventListener('toggle', resize);
@@ -121,6 +127,7 @@ async function initSettings() {
     const current = {...saved, ...draft};
     ui.setLanguage(current.language);
     for (const [key, selector] of Object.entries(fields)) $(selector).value = current[key];
+    $('#auto-pronounce-input').checked = Boolean(current.autoPronounce);
     editingLanguage = current.language;
     $('#prompt-input').value = current[promptKey()];
     const hasKey = preferences.hasKey && current.endpoint === saved.endpoint;
@@ -137,6 +144,7 @@ async function initSettings() {
   for (const [key, selector] of Object.entries(fields)) {
     $(selector).oninput = () => edit(key, key === 'temperature' ? Number($(selector).value) : $(selector).value.trim());
   }
+  $('#auto-pronounce-input').onchange = () => edit('autoPronounce', $('#auto-pronounce-input').checked);
   $('#prompt-input').oninput = () => edit(promptKey(), $('#prompt-input').value);
   $('#language-input').onchange = () => {
     edit(promptKey(), $('#prompt-input').value);
@@ -160,6 +168,7 @@ async function initSettings() {
     event.preventDefault();
     edit(promptKey(), $('#prompt-input').value);
     for (const [key, selector] of Object.entries(fields)) edit(key, key === 'temperature' ? Number($(selector).value) : $(selector).value.trim());
+    edit('autoPronounce', $('#auto-pronounce-input').checked);
     const submitted = {...draft};
     const apiKey = $('#key-input').value;
     const button = event.submitter; button.disabled = true; status(t('saving'));

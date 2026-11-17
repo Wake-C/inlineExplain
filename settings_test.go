@@ -26,6 +26,22 @@ func TestSettingsPatchPreservesUneditedFields(t *testing.T) {
 	}
 }
 
+func TestAutomaticPronunciationIsOffByDefaultAndCanBeTurnedOff(t *testing.T) {
+	if defaultSettings().AutoPronounce {
+		t.Fatal("Automatic word pronunciation must be off by default")
+	}
+	enabled := true
+	if !(SettingsPatch{AutoPronounce: &enabled}).apply(defaultSettings()).AutoPronounce {
+		t.Fatal("The automatic pronunciation preference could not be enabled")
+	}
+	disabled := false
+	current := defaultSettings()
+	current.AutoPronounce = true
+	if (SettingsPatch{AutoPronounce: &disabled}).apply(current).AutoPronounce {
+		t.Fatal("The automatic pronunciation preference could not be turned off")
+	}
+}
+
 func TestProviderCredentialIdentity(t *testing.T) {
 	for _, pair := range [][2]string{
 		{"https://api.deepseek.com", "https://api-deepseek.com"},
