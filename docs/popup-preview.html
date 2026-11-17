@@ -12,7 +12,7 @@
     button { font: inherit; color: inherit; cursor: pointer; }
     button:focus-visible { outline: 2px solid #367359; outline-offset: 4px; }
     [hidden] { display: none !important; }
-    .preview { max-width: 1200px; margin: auto; padding: 38px 48px 28px; }
+    .preview { max-width: 1200px; margin: auto; padding: 24px; }
     .masthead { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
     .brand { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 650; }
     .brand img { width: 38px; height: 38px; }
@@ -68,8 +68,6 @@
 </head>
 <body>
   <main class="preview">
-    <header class="masthead"><div class="brand"><img src="../assets/icon.png" width="38" height="38" alt=""><span>InlineExplain</span></div><span class="platform">macOS · Apple Silicon</span></header>
-    <div class="intro"><h1 data-copy="title">单词，连同上下文。</h1><p data-copy="intro">在任意应用里，指向英文单词，按 ⌥ S 就地理解。</p></div>
     <div class="workspace">
       <section aria-label="Source text illustration">
         <p class="step"><b>01</b><span data-copy="sourceStep">取词，也读附近的句子</span></p>
@@ -89,8 +87,6 @@
         <aside id="popup" class="popup"><iframe id="popup-frame" title="InlineExplain reading card"></iframe></aside>
       </section>
     </div>
-    <footer class="apps"><strong data-copy="anywhere">跟着你的阅读走</strong><span data-copy="web">网页</span><span>PDF</span><span data-copy="subtitles">可见字幕</span><span data-copy="documents">文档</span><span data-copy="apps">其他应用</span></footer>
-    <p class="preview-note" data-copy="note">场景示意 · 实际卡片渲染，示例解释 · 绿色标记用于说明取词范围，并非应用叠层</p>
     <p id="preview-error" hidden></p>
   </main>
   <script>
