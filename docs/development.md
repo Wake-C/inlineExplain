@@ -54,9 +54,18 @@ data. Serve the repository root:
 python3 -m http.server 8765 --bind 127.0.0.1
 ```
 
-Open `http://127.0.0.1:8765/docs/popup-preview.html`. At 1280 × 800, wait for
-`data-preview-ready="true"` on the document element before capturing
-`docs/assets/popup-preview.png`. The preview supports Option+S, Escape and
-clicking the example word. It does not capture the screen or call a provider.
+Open `http://127.0.0.1:8765/docs/popup-preview.html` for Chinese, or append
+`?lang=en` for English. Use a desktop viewport at least 1200 pixels wide,
+wait for `data-preview-ready="true"` and fonts to load, then capture the
+`.preview` element. Save the Chinese image to `docs/assets/popup-preview.png`
+and the English image to `docs/assets/popup-preview-en.png`. Also check the
+stacked layout at 375 pixels wide.
+
+The illustration shows the pointed word and the surrounding visible sentence,
+using `bank` beside a river as a context-dependent example. Green annotations
+are explanatory, not actual capture overlays. The card uses the production
+renderer; the source window and answer are synthetic. The preview supports
+Option+S, Escape and clicking the example word. It does not capture the screen
+or call a provider; preview speaker buttons use browser speech.
 
 For DMG generation and the manual GitHub workflow, see [Releasing](releasing.md).

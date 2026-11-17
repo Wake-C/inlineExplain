@@ -3,27 +3,27 @@
   const preview = parent.InlineExplainPreview;
   const sample = {
     id: 1,
-    language: 'zh',
+    language: preview.language,
     busy: false,
     error: '',
     passage: {
-      selection: 'grasp',
-      before: 'The guide helps readers',
-      after: 'unfamiliar ideas without breaking their flow.'
+      selection: 'bank',
+      before: 'She sat on the',
+      after: 'of the river and watched the water.'
     },
     answer: {
-      term: 'grasp',
-      partOfSpeech: '动词',
-      ukIpa: '/ɡrɑːsp/',
-      usIpa: '/ɡræsp/',
-      meaning: '理解；领会',
-      context: '把原本陌生的想法理解透彻，读懂它们的要点。',
+      term: 'bank',
+      partOfSpeech: preview.language === 'en' ? 'noun' : '名词',
+      ukIpa: '/bæŋk/',
+      usIpa: '/bæŋk/',
+      meaning: preview.language === 'en' ? 'The land along the side of a river.' : '河岸；河边的陆地。',
+      context: preview.language === 'en' ? 'She is sitting on the land beside the river, watching the water.' : '她坐在河边的陆地上，看着河水流过。',
       examples: [
-        {text: 'She quickly grasped the main idea.', translation: '她很快领会了主要意思。'},
-        {text: 'A simple example can help you grasp the concept.', translation: '一个简单的例子能帮助你理解这个概念。'}
+        {text: 'We walked along the river bank.', translation: preview.language === 'en' ? '' : '我们沿着河岸散步。'},
+        {text: 'Trees grow on both banks.', translation: preview.language === 'en' ? '' : '两岸都长着树。'}
       ],
-      synonyms: 'understand, comprehend',
-      antonyms: 'misunderstand'
+      synonyms: 'riverside, shore',
+      antonyms: ''
     }
   };
   window.mygo = {
