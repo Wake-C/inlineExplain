@@ -110,7 +110,7 @@ func TestSchemaAndLanguageValidation(t *testing.T) {
 	if _, err := Parse(encoded, "en"); err == nil {
 		t.Fatal("multiline relations should be rejected")
 	}
-	if !strings.Contains(DefaultPrompt("en"), "Use elementary English") || !strings.Contains(DefaultPrompt("zh"), "只解释用户选中的英文单词或短语") {
+	if !strings.Contains(DefaultPrompt("en"), "Write a small English dictionary card.") || !strings.Contains(DefaultPrompt("zh"), "你给学英语的人写简短的英汉查词卡。") {
 		t.Fatal("Peekturn defaults are missing")
 	}
 }
